@@ -12,7 +12,7 @@ public class MainFrame extends JFrame {
         // add panels
         cardPanel074.add(new LoginPanel(cardLayout074, cardPanel074), "login");
         cardPanel074.add(new RegisterPanel(cardLayout074, cardPanel074), "register");
-        cardPanel074.setPreferredSize(new Dimension(500,600));
+        cardPanel074.setPreferredSize(new Dimension(600,750));
         // main panel
         JPanel mainPanel074 = new JPanel();
         mainPanel074.setLayout(new GridBagLayout());
