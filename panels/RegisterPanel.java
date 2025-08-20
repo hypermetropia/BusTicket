@@ -4,11 +4,15 @@ import java.util.*;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
+import others.Globals;
+import others.UserManagement;
+
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class RegisterPanel extends JPanel {
+public class RegisterPanel extends JPanel implements ActionListener{
     JLabel registerLabel074 = new JLabel();
     JLabel usernameLabel074 = new JLabel();
     JLabel passLabel074 = new JLabel();
@@ -18,16 +22,20 @@ public class RegisterPanel extends JPanel {
 
     JPasswordField passField = new JPasswordField();
 
-    JTextField loginField = new JTextField();
     JTextField nameField = new JTextField();
     JTextField emailField074 = new JTextField();
     JTextField usernameField074 = new JTextField();
     JTextField phoneField074 = new JTextField();
 
-    JButton toregisterButton074 = new JButton();
+    JButton toLoginButton074 = new JButton();
     JButton registerButton074 = new JButton();
 
+    CardLayout card;
+    JPanel mainPanel;
+
     public RegisterPanel(CardLayout card, JPanel mainPanel) {
+        this.card = card;
+        this.mainPanel = mainPanel;
         setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
         setBorder(new EmptyBorder(80, 50, 20, 50));
         setBackground(Color.WHITE);
@@ -110,9 +118,9 @@ public class RegisterPanel extends JPanel {
         // Small spacing between label and text field
         usernamePanel.add(Box.createRigidArea(new Dimension(10, 0)));
         // TextField
-        loginField.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 23));
-        loginField.setMaximumSize(new Dimension(500, 35));
-        usernamePanel.add(loginField);
+        usernameField074.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 23));
+        usernameField074.setMaximumSize(new Dimension(500, 35));
+        usernamePanel.add(usernameField074);
         // Add to main panel
         add(usernamePanel);
         // Pass
@@ -144,6 +152,7 @@ public class RegisterPanel extends JPanel {
         registerButton074.setMaximumSize(new Dimension(Integer.MAX_VALUE, 50));
         registerButton074.setAlignmentX(CENTER_ALIGNMENT);
         registerButton074.setFocusPainted(false);
+        registerButton074.addActionListener(this);
         add(registerButton074);
         // register Button
         add(Box.createRigidArea(new Dimension(0, 5)));
@@ -151,15 +160,34 @@ public class RegisterPanel extends JPanel {
         dontHaveAccount074.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 18));
         add(dontHaveAccount074);
         add(Box.createRigidArea(new Dimension(0, 5)));
-        toregisterButton074.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 25));
-        toregisterButton074.setText("Back to Login");
-        toregisterButton074.setForeground(Color.WHITE);
-        toregisterButton074.setBackground(Color.decode("#2a9d8f"));
-        toregisterButton074.setMaximumSize(new Dimension(Integer.MAX_VALUE, 50));
-        toregisterButton074.setAlignmentX(CENTER_ALIGNMENT);
-        toregisterButton074.setFocusPainted(false);
-        toregisterButton074.addActionListener(e -> card.show(mainPanel, "login"));
-        add(toregisterButton074);
+        toLoginButton074.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 25));
+        toLoginButton074.setText("Back to Login");
+        toLoginButton074.setForeground(Color.WHITE);
+        toLoginButton074.setBackground(Color.decode("#2a9d8f"));
+        toLoginButton074.setMaximumSize(new Dimension(Integer.MAX_VALUE, 50));
+        toLoginButton074.setAlignmentX(CENTER_ALIGNMENT);
+        toLoginButton074.setFocusPainted(false);
+        toLoginButton074.addActionListener(e -> card.show(mainPanel, "login"));
+        add(toLoginButton074);
+    }
 
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if(e.getSource()==registerButton074){
+            String name = nameField.getText();
+            String email = emailField074.getText();
+            String username = usernameField074.getText();
+            String phone = phoneField074.getText();
+            String password = new String(passField.getPassword());
+            ArrayList<String> tickets = new ArrayList<>();
+            String response = UserManagement.createUser(name,username,email,phone,password,tickets);
+            if(response.equalsIgnoreCase("User already exists")){
+                JOptionPane.showMessageDialog(null, response);
+            }else{
+                Globals.loggedInId = response;
+                JOptionPane.showMessageDialog(null, "Registered Successfully");
+                card.show(mainPanel, "login");
+            }
+        }
     }
 }

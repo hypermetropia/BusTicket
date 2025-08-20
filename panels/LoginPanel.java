@@ -4,11 +4,15 @@ import java.util.*;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
+import others.Globals;
+import others.User;
+import others.UserManagement;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class LoginPanel extends JPanel {
+public class LoginPanel extends JPanel implements ActionListener {
     JLabel loginLabel074 = new JLabel();
     JLabel usernameLabel074 = new JLabel();
     JLabel passLabel074 = new JLabel();
@@ -18,7 +22,11 @@ public class LoginPanel extends JPanel {
     JButton toRegisterButton074 = new JButton();
     JButton loginButton074 = new JButton();
 
+    CardLayout cardLayout074;
+    JPanel mainPanel074;
     public LoginPanel(CardLayout card, JPanel mainPanel) {
+        this.cardLayout074 = card;
+        this.mainPanel074 = mainPanel;
         setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
         setBorder(new EmptyBorder(80, 50, 20, 50));
         setBackground(Color.WHITE);
@@ -71,29 +79,52 @@ public class LoginPanel extends JPanel {
 
         // login Button
         add(Box.createRigidArea(new Dimension(0, 40)));
-        loginButton074.setFont(new Font(Font.SANS_SERIF, Font.BOLD,25));
+        loginButton074.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 25));
         loginButton074.setText("Login");
         loginButton074.setForeground(Color.WHITE);
         loginButton074.setBackground(Color.decode("#6200EE"));
         loginButton074.setMaximumSize(new Dimension(Integer.MAX_VALUE, 50));
         loginButton074.setAlignmentX(CENTER_ALIGNMENT);
         loginButton074.setFocusPainted(false);
+        loginButton074.addActionListener(this);
         add(loginButton074);
         // register Button
         add(Box.createRigidArea(new Dimension(0, 5)));
         JLabel dontHaveAccount074 = new JLabel("Or");
-        dontHaveAccount074.setFont(new Font(Font.SANS_SERIF, Font.PLAIN,18));
+        dontHaveAccount074.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 18));
         add(dontHaveAccount074);
         add(Box.createRigidArea(new Dimension(0, 5)));
-        toRegisterButton074.setFont(new Font(Font.SANS_SERIF, Font.BOLD,25));
+        toRegisterButton074.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 25));
         toRegisterButton074.setText("Register");
         toRegisterButton074.setForeground(Color.WHITE);
         toRegisterButton074.setBackground(Color.decode("#2a9d8f"));
         toRegisterButton074.setMaximumSize(new Dimension(Integer.MAX_VALUE, 50));
         toRegisterButton074.setAlignmentX(CENTER_ALIGNMENT);
         toRegisterButton074.setFocusPainted(false);
-        toRegisterButton074.addActionListener(e->card.show(mainPanel, "register"));
+        toRegisterButton074.addActionListener(e -> card.show(mainPanel, "register"));
         add(toRegisterButton074);
 
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if(e.getSource()==loginButton074){
+            String username074 = loginField.getText();
+            String password074 = new String(passField.getPassword());
+            UserManagement.loadUser();
+            boolean flag =false;
+            for(User user: UserManagement.users){
+                String response = user.isMatch(username074, password074);
+                if(response!=""){
+                    JOptionPane.showMessageDialog(null,"Logged In Successfully");
+                    Globals.loggedInId = response;
+                    cardLayout074.show(mainPanel074, "dashboard");
+                    flag = true;
+                }
+            }
+            if(!flag){
+                JOptionPane.showMessageDialog(null, "Invalid Username or Password");
+            }
+        }
     }
 }
